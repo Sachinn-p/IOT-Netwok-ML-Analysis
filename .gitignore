@@ -1,0 +1,43 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Tooling caches
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.uv-cache/
+.kagglehub-cache/
+
+# Environment files
+.env
+.env.*
+
+# Packaging / build outputs
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Editors / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Optional generated artifacts
+# Uncomment these if you do not want to track generated outputs.
+# *.zip
+# *.joblib
+# *.png
+# *.svg

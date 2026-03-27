@@ -1,0 +1,65 @@
+{
+  "Logistic Regression": {
+    "accuracy": 0.97855,
+    "confusion_matrix": [
+      [
+        6699,
+        0,
+        101
+      ],
+      [
+        0,
+        6428,
+        172
+      ],
+      [
+        4,
+        152,
+        6444
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n        High     0.9994    0.9851    0.9922      6800\n         Low     0.9769    0.9739    0.9754      6600\n      Medium     0.9594    0.9764    0.9678      6600\n\n    accuracy                         0.9786     20000\n   macro avg     0.9786    0.9785    0.9785     20000\nweighted avg     0.9788    0.9786    0.9786     20000\n"
+  },
+  "Random Forest": {
+    "accuracy": 0.99995,
+    "confusion_matrix": [
+      [
+        6800,
+        0,
+        0
+      ],
+      [
+        0,
+        6599,
+        1
+      ],
+      [
+        0,
+        0,
+        6600
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n        High     1.0000    1.0000    1.0000      6800\n         Low     1.0000    0.9998    0.9999      6600\n      Medium     0.9998    1.0000    0.9999      6600\n\n    accuracy                         1.0000     20000\n   macro avg     0.9999    0.9999    0.9999     20000\nweighted avg     1.0000    1.0000    0.9999     20000\n"
+  },
+  "Decision Tree": {
+    "accuracy": 0.99995,
+    "confusion_matrix": [
+      [
+        6800,
+        0,
+        0
+      ],
+      [
+        0,
+        6599,
+        1
+      ],
+      [
+        0,
+        0,
+        6600
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n        High     1.0000    1.0000    1.0000      6800\n         Low     1.0000    0.9998    0.9999      6600\n      Medium     0.9998    1.0000    0.9999      6600\n\n    accuracy                         1.0000     20000\n   macro avg     0.9999    0.9999    0.9999     20000\nweighted avg     1.0000    1.0000    0.9999     20000\n"
+  }
+}

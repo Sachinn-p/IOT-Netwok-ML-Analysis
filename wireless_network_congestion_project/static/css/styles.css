@@ -1,0 +1,741 @@
+/* =============================================================
+   ORACLE-STYLE ENTERPRISE DESIGN SYSTEM
+   Conservative. Structured. No decoration without function.
+   Spacing: 4/8/16/24/32px | Radius: 2–4px | No animations
+   ============================================================= */
+
+/* -------------------------------------------------------------
+   1. DESIGN TOKENS
+   ------------------------------------------------------------- */
+
+:root {
+  /* Page & surfaces */
+  --c-bg:             #f4f4f4;
+  --c-surface:        #ffffff;
+  --c-surface-raised: #f9f9f9;
+  --c-surface-inset:  #f0f0f0;
+
+  /* Left navigation — deep navy */
+  --c-nav-bg:         #0f2342;
+  --c-nav-border:     #091830;
+  --c-nav-text:       #8aaac8;
+  --c-nav-text-active:#ffffff;
+  --c-nav-hover-bg:   rgba(255, 255, 255, 0.06);
+  --c-nav-active-bg:  rgba(255, 255, 255, 0.10);
+  --c-nav-active-bar: #4a9eda;
+
+  /* Typography */
+  --c-text:           #1a1a1a;
+  --c-text-secondary: #595959;
+  --c-text-muted:     #888888;
+  --c-text-inverted:  #ffffff;
+
+  /* Borders — fine, not heavy */
+  --c-border:         #d8d8d8;
+  --c-border-strong:  #b8b8b8;
+
+  /* Oracle red — CTA only */
+  --c-red:            #c74634;
+  --c-red-dark:       #a8381c;
+
+  /* Blue — links, focus, secondary actions */
+  --c-blue:           #1b6ac9;
+  --c-blue-dark:      #155aaa;
+
+  /* Status — subdued, functional */
+  --c-ok-text:        #2a6b3c;
+  --c-ok-bg:          #edf7f1;
+  --c-ok-border:      #a8d4b8;
+  --c-busy-text:      #7a5200;
+  --c-busy-bg:        #fdf5e0;
+  --c-busy-border:    #d4b060;
+  --c-err-text:       #9e2020;
+  --c-err-bg:         #fcecec;
+  --c-err-border:     #d89090;
+
+  /* Shadow — one level, border-first approach */
+  --shadow:           0 1px 3px rgba(0, 0, 0, 0.10);
+
+  /* Spacing */
+  --sp-1:  8px;
+  --sp-2:  16px;
+  --sp-3:  24px;
+  --sp-4:  32px;
+
+  /* Type scale */
+  --t-xs:   0.75rem;    /* 12px */
+  --t-sm:   0.8125rem;  /* 13px */
+  --t-base: 0.875rem;   /* 14px */
+  --t-md:   1rem;       /* 16px */
+  --t-lg:   1.125rem;   /* 18px */
+
+  /* Fonts */
+  --f-ui:   "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+  --f-mono: "Consolas", "Courier New", monospace;
+
+  /* Radius — conservative, not soft */
+  --r-sm: 2px;
+  --r-md: 4px;
+
+  --tr: 100ms ease;
+}
+
+/* -------------------------------------------------------------
+   2. RESET & BASE
+   ------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--f-ui);
+  font-size: var(--t-base);
+  color: var(--c-text);
+  background-color: var(--c-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -------------------------------------------------------------
+   3. LAYOUT
+   ------------------------------------------------------------- */
+
+.enterprise-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+/* -------------------------------------------------------------
+   4. SIDEBAR
+   ------------------------------------------------------------- */
+
+.sidebar {
+  background-color: var(--c-nav-bg);
+  border-right: 1px solid var(--c-nav-border);
+  color: var(--c-nav-text);
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-3) 0 var(--sp-2);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  padding: 0 var(--sp-2) var(--sp-2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: var(--sp-1);
+}
+
+.brand-eyebrow {
+  display: block;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: #4e6e8e;
+  margin-bottom: 6px;
+  letter-spacing: 0;
+}
+
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: var(--t-base);
+  font-weight: 600;
+  color: var(--c-nav-text-active);
+  line-height: 1.4;
+}
+
+.sidebar-brand p {
+  margin: 4px 0 0;
+  font-size: var(--t-xs);
+  color: #4e6e8e;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-1) 0;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px var(--sp-2);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  color: var(--c-nav-text);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: color var(--tr), background-color var(--tr);
+}
+
+.nav-item svg {
+  flex-shrink: 0;
+  opacity: 0.55;
+}
+
+.nav-item:hover svg,
+.nav-item.active svg {
+  opacity: 1;
+}
+
+.nav-item:hover {
+  background-color: var(--c-nav-hover-bg);
+  color: var(--c-nav-text-active);
+}
+
+.nav-item.active {
+  background-color: var(--c-nav-active-bg);
+  color: var(--c-nav-text-active);
+  border-left-color: var(--c-nav-active-bar);
+  font-weight: 500;
+}
+
+.system-panel {
+  margin-top: auto;
+  padding: var(--sp-2);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.system-panel h3 {
+  margin: 0 0 var(--sp-1);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: #4e6e8e;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.system-hint {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--t-xs);
+  color: #4e6e8e;
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------
+   5. STATUS INDICATORS
+   ------------------------------------------------------------- */
+
+.status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.state-ok {
+  color: var(--c-ok-text);
+  background-color: var(--c-ok-bg);
+  border-color: var(--c-ok-border);
+}
+
+.state-busy {
+  color: var(--c-busy-text);
+  background-color: var(--c-busy-bg);
+  border-color: var(--c-busy-border);
+}
+
+.state-error {
+  color: var(--c-err-text);
+  background-color: var(--c-err-bg);
+  border-color: var(--c-err-border);
+}
+
+/* -------------------------------------------------------------
+   6. WORKSPACE
+   ------------------------------------------------------------- */
+
+.workspace {
+  padding: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-width: 0;
+  background-color: var(--c-bg);
+}
+
+/* -------------------------------------------------------------
+   7. WORKSPACE HEADER
+   ------------------------------------------------------------- */
+
+.workspace-header {
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: var(--sp-2) var(--sp-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+
+.header-eyebrow {
+  margin: 0 0 3px;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: var(--c-text-muted);
+}
+
+.workspace-header h2 {
+  margin: 0;
+  font-size: var(--t-lg);
+  font-weight: 400;
+  color: var(--c-text);
+}
+
+/* -------------------------------------------------------------
+   8. SURFACE / PANEL BASE
+   ------------------------------------------------------------- */
+
+.surface {
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+}
+
+/* -------------------------------------------------------------
+   9. KPI GRID
+   ------------------------------------------------------------- */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-2);
+}
+
+.kpi-card {
+  padding: var(--sp-2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 2px solid var(--c-border);
+}
+
+.kpi-card h3 {
+  margin: 0;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: var(--c-text-muted);
+}
+
+.kpi-card p {
+  margin: 0;
+  font-size: var(--t-lg);
+  font-weight: 400;
+  color: var(--c-text);
+  line-height: 1.2;
+}
+
+/* -------------------------------------------------------------
+   10. META ROW
+   ------------------------------------------------------------- */
+
+.meta-row {
+  display: grid;
+}
+
+.meta-card {
+  padding: var(--sp-2);
+}
+
+.meta-card h3 {
+  margin: 0;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: var(--c-text-muted);
+}
+
+.meta-card p {
+  margin: 4px 0 0;
+  font-size: var(--t-sm);
+  font-family: var(--f-mono);
+  color: var(--c-text);
+  word-break: break-all;
+}
+
+/* -------------------------------------------------------------
+   11. PANEL GRID
+   ------------------------------------------------------------- */
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.panel {
+  padding: 0;
+}
+
+.panel h2 {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--t-base);
+  font-weight: 600;
+  color: var(--c-text);
+  border-bottom: 1px solid var(--c-border);
+  background-color: var(--c-surface-raised);
+  border-radius: var(--r-md) var(--r-md) 0 0;
+}
+
+.panel-subtitle {
+  margin: 0;
+  padding: var(--sp-1) var(--sp-3) var(--sp-2);
+  font-size: var(--t-sm);
+  color: var(--c-text-secondary);
+  border-bottom: 1px solid var(--c-border);
+}
+
+/* Full-width panel (models, plots) */
+#models,
+#plots {
+  padding: 0;
+}
+
+#models h2,
+#plots h2 {
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--t-base);
+  font-weight: 600;
+  color: var(--c-text);
+  border-bottom: 1px solid var(--c-border);
+  background-color: var(--c-surface-raised);
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  margin: 0;
+}
+
+#models .panel-subtitle,
+#plots .panel-subtitle {
+  padding: var(--sp-1) var(--sp-3) var(--sp-2);
+  border-bottom: 1px solid var(--c-border);
+}
+
+#models .table-wrap,
+#plots .plot-grid {
+  padding: var(--sp-2) var(--sp-3);
+}
+
+/* Prediction panel body */
+#prediction .predict-form,
+#prediction .result-box {
+  margin-left: var(--sp-3);
+  margin-right: var(--sp-3);
+}
+
+#prediction .result-box {
+  margin-bottom: var(--sp-2);
+}
+
+/* Pipeline panel body */
+.panel .status-box {
+  margin: 0 var(--sp-3) var(--sp-2);
+}
+
+/* -------------------------------------------------------------
+   12. PREDICTION FORM
+   ------------------------------------------------------------- */
+
+.predict-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
+.predict-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--t-sm);
+  font-weight: 400;
+  color: var(--c-text-secondary);
+}
+
+.predict-form input {
+  padding: 6px var(--sp-1);
+  font-size: var(--t-base);
+  font-family: var(--f-ui);
+  color: var(--c-text);
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  transition: border-color var(--tr);
+}
+
+.predict-form input:focus {
+  outline: none;
+  border-color: var(--c-blue);
+  box-shadow: 0 0 0 2px rgba(27, 106, 201, 0.12);
+}
+
+.predict-form button {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+}
+
+/* -------------------------------------------------------------
+   13. BUTTONS
+   ------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px var(--sp-2);
+  font-family: var(--f-ui);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background-color var(--tr), border-color var(--tr);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Oracle red — primary action only */
+.btn-primary {
+  background-color: var(--c-red);
+  border-color: var(--c-red-dark);
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--c-red-dark);
+}
+
+/* Blue — form submit */
+.btn-accent {
+  background-color: var(--c-blue);
+  border-color: var(--c-blue-dark);
+  color: #ffffff;
+}
+
+.btn-accent:hover:not(:disabled) {
+  background-color: var(--c-blue-dark);
+}
+
+/* -------------------------------------------------------------
+   14. RESULT BOX
+   ------------------------------------------------------------- */
+
+.result-box {
+  padding: var(--sp-1) var(--sp-2);
+  background-color: var(--c-surface-inset);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  font-size: var(--t-sm);
+  color: var(--c-text);
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------
+   15. PIPELINE LOG BOX
+   ------------------------------------------------------------- */
+
+.status-box {
+  margin: 0;
+  min-height: 200px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  padding: var(--sp-2);
+  background-color: #1e1e1e;
+  color: #cccccc;
+  border: 1px solid #3c3c3c;
+  border-radius: var(--r-sm);
+  white-space: pre-wrap;
+}
+
+/* -------------------------------------------------------------
+   16. DATA TABLE
+   ------------------------------------------------------------- */
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+}
+
+thead th {
+  padding: 9px var(--sp-2);
+  text-align: left;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--c-text-secondary);
+  background-color: var(--c-surface-raised);
+  border-bottom: 1px solid var(--c-border-strong);
+}
+
+tbody td {
+  padding: 9px var(--sp-2);
+  color: var(--c-text);
+  border-bottom: 1px solid var(--c-border);
+  vertical-align: top;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover td {
+  background-color: #f9f9f9;
+}
+
+/* -------------------------------------------------------------
+   17. PLOTS GRID
+   ------------------------------------------------------------- */
+
+.plot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+}
+
+.plot-grid figure {
+  margin: 0;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background-color: var(--c-surface);
+}
+
+.plot-grid img {
+  display: block;
+  width: 100%;
+  height: 210px;
+  object-fit: contain;
+  background-color: var(--c-surface-raised);
+  padding: var(--sp-1);
+}
+
+.plot-grid figcaption {
+  padding: 6px var(--sp-2);
+  font-size: var(--t-xs);
+  color: var(--c-text-secondary);
+  background-color: var(--c-surface-raised);
+  border-top: 1px solid var(--c-border);
+}
+
+/* -------------------------------------------------------------
+   18. RESPONSIVE
+   ------------------------------------------------------------- */
+
+@media (max-width: 1280px) {
+  .enterprise-layout {
+    grid-template-columns: 210px 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .enterprise-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-2);
+    border-right: none;
+    border-bottom: 1px solid var(--c-nav-border);
+  }
+
+  .sidebar-brand {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0;
+    flex: none;
+  }
+
+  .nav-item {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    padding: var(--sp-1) var(--sp-1);
+  }
+
+  .nav-item.active {
+    border-bottom-color: var(--c-nav-active-bar);
+    border-left-color: transparent;
+  }
+
+  .system-panel {
+    margin-top: 0;
+    padding: 0;
+    border-top: none;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .panel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace {
+    padding: var(--sp-2);
+  }
+
+  .workspace-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+  }
+
+  .workspace-header .btn {
+    width: 100%;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .predict-form {
+    grid-template-columns: 1fr;
+  }
+
+  .plot-grid {
+    grid-template-columns: 1fr;
+  }
+}

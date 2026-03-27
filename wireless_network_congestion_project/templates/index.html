@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enterprise Network Congestion Console</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body>
+    <div class="enterprise-layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-eyebrow">ENTERPRISE ANALYTICS</span>
+          <h1>Wireless Congestion Console</h1>
+          <p>Operational Intelligence Workspace</p>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-item active" href="#overview">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="1" y="1" width="5.5" height="5.5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="8.5" y="1" width="5.5" height="5.5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="1" y="8.5" width="5.5" height="5.5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="8.5" y="8.5" width="5.5" height="5.5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            Overview
+          </a>
+          <a class="nav-item" href="#prediction">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M1 11.5L5 7l3 3 5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="13" cy="3" r="1.2" fill="currentColor"/>
+            </svg>
+            Prediction
+          </a>
+          <a class="nav-item" href="#models">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="1" y="1" width="13" height="13" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+              <line x1="1" y1="5" x2="14" y2="5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="1" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="5" y1="5" x2="5" y2="14" stroke="currentColor" stroke-width="1.1"/>
+            </svg>
+            Model Metrics
+          </a>
+          <a class="nav-item" href="#plots">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="1" y="7" width="3" height="7" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="6" y="4" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="11" y="1" width="3" height="13" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            Visual Insights
+          </a>
+        </nav>
+
+        <section class="system-panel">
+          <h3>System Status</h3>
+          <div id="system-state" class="status-pill state-ok">Online</div>
+          <p class="system-hint">Training and prediction operations are available.</p>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-header">
+          <div>
+            <p class="header-eyebrow">Network Operations</p>
+            <h2>Congestion Prediction and Model Control Center</h2>
+          </div>
+          <button id="train-btn" class="btn btn-primary">Run Full Pipeline</button>
+        </header>
+
+        <section id="overview" class="kpi-grid">
+          <article class="surface kpi-card">
+            <h3>Dataset Rows</h3>
+            <p id="rows-kpi">-</p>
+          </article>
+          <article class="surface kpi-card">
+            <h3>Dataset Columns</h3>
+            <p id="cols-kpi">-</p>
+          </article>
+          <article class="surface kpi-card">
+            <h3>Best Model</h3>
+            <p id="best-model-kpi">-</p>
+          </article>
+          <article class="surface kpi-card">
+            <h3>Last Refresh</h3>
+            <p id="refresh-kpi">-</p>
+          </article>
+        </section>
+
+        <section class="meta-row">
+          <article class="surface meta-card">
+            <h3>Dataset Source</h3>
+            <p id="dataset-path">Loading dataset path...</p>
+          </article>
+        </section>
+
+        <section class="panel-grid">
+          <article id="prediction" class="surface panel">
+            <h2>Congestion Prediction</h2>
+            <p class="panel-subtitle">
+              Enter live telemetry values and run single-point congestion inference.
+            </p>
+            <form id="predict-form" class="predict-form">
+              <label>
+                Packet Rate
+                <input type="number" step="0.01" id="packet_rate" required />
+              </label>
+              <label>
+                Bandwidth
+                <input type="number" step="0.01" id="bandwidth" required />
+              </label>
+              <label>
+                Latency
+                <input type="number" step="0.01" id="latency" required />
+              </label>
+              <label>
+                Packet Loss
+                <input type="number" step="0.01" id="packet_loss" required />
+              </label>
+              <button type="submit" class="btn btn-accent">Predict Congestion</button>
+            </form>
+
+            <div id="prediction-result" class="result-box">No prediction yet.</div>
+          </article>
+
+          <article class="surface panel">
+            <h2>Pipeline Status</h2>
+            <p class="panel-subtitle">
+              Training status, model selection output, and execution messages.
+            </p>
+            <pre id="pipeline-status" class="status-box">Waiting for action...</pre>
+          </article>
+        </section>
+
+        <section id="models" class="surface panel">
+          <h2>Model Performance</h2>
+          <p class="panel-subtitle">Comparative metrics across all trained classifiers.</p>
+          <div class="table-wrap">
+            <table id="metrics-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Accuracy</th>
+                  <th>Confusion Matrix</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="plots" class="surface panel">
+          <h2>Congestion Visualizations</h2>
+          <p class="panel-subtitle">
+            Updated after each full training run to reflect current model inputs.
+          </p>
+          <div class="plot-grid">
+            <figure>
+              <img
+                id="corr-plot"
+                src="/plots/correlation_heatmap.png"
+                alt="Correlation Heatmap"
+              />
+              <figcaption>Correlation Heatmap</figcaption>
+            </figure>
+            <figure>
+              <img
+                id="bw-rate-plot"
+                src="/plots/bandwidth_vs_packet_rate.png"
+                alt="Bandwidth vs Packet Rate"
+              />
+              <figcaption>Bandwidth vs Packet Rate</figcaption>
+            </figure>
+            <figure>
+              <img
+                id="dist-plot"
+                src="/plots/congestion_distribution.png"
+                alt="Congestion Distribution"
+              />
+              <figcaption>Congestion Distribution</figcaption>
+            </figure>
+            <figure>
+              <img
+                id="trend-plot"
+                src="/plots/congestion_trend.png"
+                alt="Congestion Trend"
+              />
+              <figcaption>Congestion Trend</figcaption>
+            </figure>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+  </body>
+</html>
