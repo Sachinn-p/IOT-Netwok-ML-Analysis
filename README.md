@@ -4,11 +4,11 @@ This project predicts wireless network congestion from IoT traffic data using a 
 
 It includes:
 
-- dataset loading from KaggleHub
-- data cleaning and feature engineering
-- exploratory plots for network behavior
-- model training and best-model selection
-- a browser UI and prediction API
+- Dataset loading from KaggleHub
+- Data cleaning and feature engineering
+- Exploratory plots for network behavior
+- Model training and best-model selection
+- A browser UI and prediction API
 
 ## About
 

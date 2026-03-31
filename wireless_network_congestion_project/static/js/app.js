@@ -9,6 +9,7 @@ const metricsTableBody = document.querySelector("#metrics-table tbody");
 const predictForm = document.getElementById("predict-form");
 const predictionResult = document.getElementById("prediction-result");
 const trainButton = document.getElementById("train-btn");
+const systemDataButton = document.getElementById("system-data-btn");
 
 function setPipelineStatus(message) {
   pipelineStatus.textContent = message;
@@ -31,7 +32,7 @@ function renderMetricsTable(metrics) {
 
   if (modelNames.length === 0) {
     const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="3">No model metrics found. Run pipeline first.</td>`;
+    row.innerHTML = `<td colspan="4">No model metrics found. Run pipeline first.</td>`;
     metricsTableBody.appendChild(row);
     return;
   }
@@ -42,6 +43,7 @@ function renderMetricsTable(metrics) {
     row.innerHTML = `
       <td>${name}</td>
       <td>${Number(data.accuracy).toFixed(4)}</td>
+      <td>${(Number(data.accuracy) * 100).toFixed(2)}%</td>
       <td>${formatMatrix(data.confusion_matrix)}</td>
     `;
     metricsTableBody.appendChild(row);
@@ -150,6 +152,51 @@ async function runPrediction(event) {
   }
 }
 
+async function loadCurrentSystemData() {
+  if (!systemDataButton) return;
+  const originalLabel = systemDataButton.textContent;
+  systemDataButton.disabled = true;
+  systemDataButton.textContent = "Sampling...";
+  predictionResult.textContent = "Collecting current system network data...";
+  setSystemState("Sampling", "state-busy");
+
+  try {
+    const response = await fetch("/api/system-data");
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || "System data request failed.");
+    }
+
+    document.getElementById("packet_rate").value = Number(data.packet_rate).toFixed(2);
+    document.getElementById("bandwidth").value = Number(data.bandwidth).toFixed(2);
+    document.getElementById("latency").value = Number(data.latency).toFixed(2);
+    document.getElementById("packet_loss").value = Number(data.packet_loss).toFixed(2);
+
+    const noActivityDetected =
+      Number(data.packet_rate) === 0 &&
+      Number(data.bandwidth) === 0 &&
+      Number(data.packet_loss) === 0;
+
+    predictionResult.textContent = noActivityDetected
+      ? "Current system data loaded. No active network traffic was detected during the sample window, so the fields were filled with 0.00 values."
+      : `Current system data loaded | Packet Rate: ${Number(data.packet_rate).toFixed(
+          2
+        )} | Bandwidth: ${Number(data.bandwidth).toFixed(2)} | Latency: ${Number(
+          data.latency
+        ).toFixed(2)} | Packet Loss: ${Number(data.packet_loss).toFixed(2)}`;
+    setSystemState("Online", "state-ok");
+  } catch (error) {
+    predictionResult.textContent = `System data load failed: ${error.message}`;
+    setSystemState("Fault", "state-error");
+  } finally {
+    systemDataButton.disabled = false;
+    systemDataButton.textContent = originalLabel;
+  }
+}
+
 trainButton.addEventListener("click", runTraining);
 predictForm.addEventListener("submit", runPrediction);
+if (systemDataButton) {
+  systemDataButton.addEventListener("click", loadCurrentSystemData);
+}
 loadSummary();

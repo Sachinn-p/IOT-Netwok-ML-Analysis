@@ -43,6 +43,17 @@ def clean_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, int]]:
     return cleaned_df, report
 
 
+def _min_max_series(series: pd.Series) -> pd.Series:
+    numeric_series = series.astype(float)
+    min_value = numeric_series.min()
+    max_value = numeric_series.max()
+
+    if pd.isna(min_value) or pd.isna(max_value) or max_value == min_value:
+        return pd.Series(0.0, index=numeric_series.index)
+
+    return (numeric_series - min_value) / (max_value - min_value)
+
+
 def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     featured_df = df.copy()
 
@@ -57,19 +68,45 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     featured_df["packet_rate"] = 1.0 / transmission_time
     featured_df["bytes_per_second"] = featured_df["packet_size"] / transmission_time
     featured_df["network_load"] = featured_df["packet_rate"] * bandwidth
-
-    q1 = featured_df["network_load"].quantile(0.33)
-    q2 = featured_df["network_load"].quantile(0.66)
-
-    featured_df["congestion_level"] = np.select(
-        [
-            featured_df["network_load"] <= q1,
-            (featured_df["network_load"] > q1) & (featured_df["network_load"] <= q2),
-            featured_df["network_load"] > q2,
-        ],
-        ["Low", "Medium", "High"],
-        default="Medium",
+    bandwidth_usage = featured_df.get(
+        "bandwidth_usage", pd.Series(0.0, index=featured_df.index)
     )
+    bandwidth_pressure = bandwidth_usage / bandwidth.clip(lower=1e-6)
+
+    protocol_risk = featured_df.get(
+        "protocol_type", pd.Series("Unknown", index=featured_df.index)
+    ).map({"TCP": 0.00, "HTTP": 0.03, "UDP": 0.05}).fillna(0.01)
+    device_risk = featured_df.get(
+        "device_type", pd.Series("Unknown", index=featured_df.index)
+    ).map({"sensor": 0.00, "actuator": 0.02, "camera": 0.04}).fillna(0.01)
+
+    congestion_score = (
+        0.24 * _min_max_series(featured_df["packet_rate"])
+        + 0.18 * _min_max_series(featured_df["latency"])
+        + 0.18 * _min_max_series(featured_df["packet_loss_rate"])
+        + 0.14
+        * _min_max_series(
+            featured_df.get("jitter", pd.Series(0.0, index=featured_df.index))
+        )
+        + 0.16 * _min_max_series(bandwidth_pressure.clip(upper=10))
+        + 0.10
+        * _min_max_series(
+            featured_df.get("energy_usage", pd.Series(0.0, index=featured_df.index))
+        )
+        + protocol_risk
+        + device_risk
+    )
+    featured_df["congestion_score"] = congestion_score
+
+    q1 = congestion_score.quantile(0.33)
+    q2 = congestion_score.quantile(0.66)
+
+    featured_df["congestion_level"] = pd.cut(
+        congestion_score,
+        bins=[-np.inf, q1, q2, np.inf],
+        labels=["Low", "Medium", "High"],
+        include_lowest=True,
+    ).astype(str)
 
     return featured_df
 

@@ -7,10 +7,11 @@ os.environ.setdefault("JOBLIB_MULTIPROCESSING", "0")
 
 import joblib
 import pandas as pd
+from sklearn.base import clone
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
@@ -21,7 +22,6 @@ MODEL_FEATURES = [
     "allocated_bandwidth",
     "latency",
     "packet_loss_rate",
-    "network_load",
 ]
 TARGET_COLUMN = "congestion_level"
 
@@ -51,14 +51,21 @@ def build_models() -> Dict[str, object]:
                 ("scaler", StandardScaler()),
                 (
                     "classifier",
-                    LogisticRegression(max_iter=1000, random_state=42),
+                    LogisticRegression(max_iter=1000, random_state=42, C=0.5),
                 ),
             ]
         ),
         "Random Forest": RandomForestClassifier(
-            n_estimators=300, random_state=42, n_jobs=1
+            n_estimators=200,
+            random_state=42,
+            n_jobs=1,
+            max_depth=10,
+            min_samples_leaf=20,
+            min_samples_split=40,
         ),
-        "Decision Tree": DecisionTreeClassifier(random_state=42),
+        "Decision Tree": DecisionTreeClassifier(
+            random_state=42, max_depth=8, min_samples_leaf=30, min_samples_split=60
+        ),
     }
 
 
@@ -70,15 +77,25 @@ def evaluate_models(
 ) -> Dict[str, Dict[str, object]]:
     models = build_models()
     results: Dict[str, Dict[str, object]] = {}
+    cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
 
     for model_name, model in models.items():
+        cv_scores = cross_val_score(
+            clone(model), X_train, y_train, cv=cv, scoring="accuracy", n_jobs=1
+        )
         model.fit(X_train, y_train)
+        y_train_pred = model.predict(X_train)
         y_pred = model.predict(X_test)
+        train_accuracy = float(accuracy_score(y_train, y_train_pred))
         accuracy = float(accuracy_score(y_test, y_pred))
 
         results[model_name] = {
             "model": model,
             "accuracy": accuracy,
+            "train_accuracy": train_accuracy,
+            "cv_accuracy_mean": float(cv_scores.mean()),
+            "cv_accuracy_std": float(cv_scores.std()),
+            "generalization_gap": float(train_accuracy - accuracy),
             "confusion_matrix": confusion_matrix(y_test, y_pred).tolist(),
             "classification_report": classification_report(
                 y_test, y_pred, digits=4, zero_division=0
@@ -89,7 +106,13 @@ def evaluate_models(
 
 
 def select_best_model(results: Dict[str, Dict[str, object]]) -> str:
-    return max(results, key=lambda name: results[name]["accuracy"])
+    return max(
+        results,
+        key=lambda name: (
+            results[name]["cv_accuracy_mean"],
+            -results[name]["generalization_gap"],
+        ),
+    )
 
 
 def save_training_outputs(
@@ -113,6 +136,10 @@ def save_training_outputs(
     metrics_dict = {
         model_name: {
             "accuracy": metrics["accuracy"],
+            "train_accuracy": metrics["train_accuracy"],
+            "cv_accuracy_mean": metrics["cv_accuracy_mean"],
+            "cv_accuracy_std": metrics["cv_accuracy_std"],
+            "generalization_gap": metrics["generalization_gap"],
             "confusion_matrix": metrics["confusion_matrix"],
             "classification_report": metrics["classification_report"],
         }

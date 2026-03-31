@@ -486,8 +486,22 @@ body {
 }
 
 .predict-form button {
-  grid-column: 1 / -1;
   margin-top: 4px;
+}
+
+.predict-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin-top: 4px;
+}
+
+.predict-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--t-xs);
+  color: var(--c-text-muted);
 }
 
 /* -------------------------------------------------------------
@@ -533,6 +547,16 @@ body {
 
 .btn-accent:hover:not(:disabled) {
   background-color: var(--c-blue-dark);
+}
+
+.btn-secondary {
+  background-color: var(--c-surface-raised);
+  border-color: var(--c-border-strong);
+  color: var(--c-text);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--c-surface-inset);
 }
 
 /* -------------------------------------------------------------

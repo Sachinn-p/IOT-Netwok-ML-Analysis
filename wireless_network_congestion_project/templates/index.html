@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Enterprise Network Congestion Console</title>
-    <link rel="stylesheet" href="/static/css/styles.css" />
+    <link rel="stylesheet" href="/static/css/styles.css?v={{ asset_version }}" />
   </head>
   <body>
     <div class="enterprise-layout">
@@ -116,7 +116,15 @@
                 Packet Loss
                 <input type="number" step="0.01" id="packet_loss" required />
               </label>
-              <button type="submit" class="btn btn-accent">Predict Congestion</button>
+              <div class="predict-actions">
+                <button type="button" id="system-data-btn" class="btn btn-secondary">
+                  Use Current System Data
+                </button>
+                <button type="submit" class="btn btn-accent">Predict Congestion</button>
+              </div>
+              <p class="predict-note">
+                Samples this machine for about 1 second and fills the form automatically.
+              </p>
             </form>
 
             <div id="prediction-result" class="result-box">No prediction yet.</div>
@@ -140,6 +148,7 @@
                 <tr>
                   <th>Model</th>
                   <th>Accuracy</th>
+                  <th>Accuracy (%)</th>
                   <th>Confusion Matrix</th>
                 </tr>
               </thead>
@@ -191,6 +200,6 @@
       </main>
     </div>
 
-    <script src="/static/js/app.js"></script>
+    <script src="/static/js/app.js?v={{ asset_version }}"></script>
   </body>
 </html>
