@@ -14,7 +14,7 @@ ENV/
 .pytest_cache/
 .mypy_cache/
 .uv-cache/
-.kagglehub-cache/
+kagglehub-cache/
 
 # Environment files
 .env
@@ -31,6 +31,7 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+.codex
 
 # Logs
 *.log
